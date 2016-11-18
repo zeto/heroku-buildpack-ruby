@@ -585,31 +585,33 @@ WARNING
 
         bundler_output = ""
         bundle_time    = nil
-        Dir.mktmpdir("libyaml-") do |tmpdir|
-          libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
-          install_libyaml(libyaml_dir)
+        if stack.match(/^cedar-\d+/)
+          Dir.mktmpdir("libyaml-") do |tmpdir|
+            libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
+            install_libyaml(libyaml_dir)
 
-          # need to setup compile environment for the psych gem
-          yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
-          yaml_lib       = File.expand_path("#{libyaml_dir}/lib").shellescape
-          pwd            = Dir.pwd
-          bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}/lib"
-          # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
-          # codon since it uses bundler.
-          env_vars       = {
-            "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
-            "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
-            "CPATH"                         => noshellescape("#{yaml_include}:$CPATH"),
-            "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),
-            "LIBRARY_PATH"                  => noshellescape("#{yaml_lib}:$LIBRARY_PATH"),
-            "RUBYOPT"                       => syck_hack,
-            "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true"
-          }
-          env_vars["BUNDLER_LIB_PATH"] = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
-          puts "Running: #{bundle_command}"
-          instrument "ruby.bundle_install" do
-            bundle_time = Benchmark.realtime do
-              bundler_output << pipe("#{bundle_command} --no-clean", out: "2>&1", env: env_vars, user_env: true)
+            # need to setup compile environment for the psych gem
+            yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
+            yaml_lib       = File.expand_path("#{libyaml_dir}/lib").shellescape
+            pwd            = Dir.pwd
+            bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}/lib"
+            # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
+            # codon since it uses bundler.
+            env_vars       = {
+              "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
+              "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
+              "CPATH"                         => noshellescape("#{yaml_include}:$CPATH"),
+              "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),
+              "LIBRARY_PATH"                  => noshellescape("#{yaml_lib}:$LIBRARY_PATH"),
+              "RUBYOPT"                       => syck_hack,
+              "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true"
+            }
+            env_vars["BUNDLER_LIB_PATH"] = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
+            puts "Running: #{bundle_command}"
+            instrument "ruby.bundle_install" do
+              bundle_time = Benchmark.realtime do
+                bundler_output << pipe("#{bundle_command} --no-clean", out: "2>&1", env: env_vars, user_env: true)
+              end
             end
           end
         end

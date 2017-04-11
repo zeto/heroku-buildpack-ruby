@@ -80,6 +80,7 @@
     "sharpstone/node_multi"
   ],
   "ci": [
+    "sharpstone/bad_gemspec_ci",
     "sharpstone/rails5_ruby_schema_format",
     "sharpstone/heroku-ci-json-example"
   ]

@@ -21,6 +21,39 @@ def execute_test(command)
 end
 
 def execute_command(command)
+  puts "=========="
+
+
+  puts "/usr/bin/env ruby -v:"
+  pipe("/usr/bin/env ruby -v")
+
+  puts "/usr/bin/env which ruby:"
+  pipe("/usr/bin/env which ruby")
+
+  puts "/usr/bin/env echo $PATH:"
+  pipe("/usr/bin/env echo $PATH")
+
+  puts "/usr/bin/env:"
+  pipe("/usr/bin/env")
+
+  puts "which env"
+  pipe("which env")
+
+  puts 'which ruby'
+  pipe("which ruby",     :user_env => true)
+
+  puts 'ruby -v'
+  pipe("ruby -v",        :user_env => true)
+
+  puts 'GEM_PATH:'
+  pipe("echo $GEM_PATH", :user_env => true)
+
+  puts 'PATH:'
+  pipe("echo $PATH",     :user_env => true)
+
+  puts "env:"
+  pipe("env",       :user_env => true)
+
   pipe(command, :user_env => true)
 end
 

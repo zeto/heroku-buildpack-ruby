@@ -102,7 +102,7 @@ module LanguagePack
     # (denoted by ----->)
     # @param [String] topic message to be displayed
     def topic(message)
-      Kernel.puts "-----> #{message}"
+      Kernel.puts "\n\e[1m\e[36m=== #{message}\e[0m"
       $stdout.flush
     end
 
@@ -111,7 +111,7 @@ module LanguagePack
     # @param [String] message to be displayed
     def puts(message)
       message.to_s.split("\n").each do |line|
-        super "       #{line.strip}"
+        super "#{line.strip}"
       end
       $stdout.flush
     end

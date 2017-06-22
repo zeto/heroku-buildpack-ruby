@@ -84,12 +84,12 @@ class LanguagePack::Base
     instrument 'base.compile' do
       Kernel.puts ""
       @warnings.each do |warning|
-        Kernel.puts "###### WARNING:"
+        Kernel.puts "\e[1m\e[33m=#= WARNING\e[0m"
         puts warning
         Kernel.puts ""
       end
       if @deprecations.any?
-        topic "DEPRECATIONS:"
+        topic "\e[1m\e[33m=#= DEPRECATIONS\e[0m"
         puts @deprecations.join("\n")
       end
     end

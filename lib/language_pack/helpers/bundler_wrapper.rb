@@ -88,22 +88,12 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def ruby_version
     instrument 'detect_ruby_version' do
-      env = { "PATH"     => "#{bundler_path}/bin:#{ENV['PATH']}",
-              "RUBYLIB"  => File.join(bundler_path, "gems", BUNDLER_DIR_NAME, "lib"),
-              "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}",
-              "BUNDLE_DISABLE_VERSION_CHECK" => "true"
-            }
-      command = "bundle platform --ruby"
-
-      # Silently check for ruby version
-      output  = run_stdout(command, user_env: true, env: env)
-
-      # If there's a gem in the Gemfile (i.e. syntax error) emit error
-      raise GemfileParseError.new(run("bundle check", user_env: true, env: env)) unless $?.success?
-      if output.match(/No ruby version specified/)
-        ""
+      ruby_version = Bundler::Definition.build('Gemfile', 'Gemfile.lock', nil).ruby_version
+      if ruby_version
+        ruby_version.single_version_string.sub(/(p-?\d+)/, ' \1').split.join('-')
       else
-        output.chomp.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
+        # Not specified in Gemfile or Gemfile.lock
+        ""
       end
     end
   end

@@ -88,9 +88,17 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def ruby_version
     instrument 'detect_ruby_version' do
-      ruby_version = Bundler::Definition.build('Gemfile', 'Gemfile.lock', nil).ruby_version
+      ruby_version = begin
+         Bundler::Definition.build('Gemfile', 'Gemfile.lock', nil).ruby_version
+      rescue Bundler::Dsl::DSLError => e
+        raise GemfileParseError.new(e)
+      end
+
       if ruby_version
-        ruby_version.single_version_string.sub(/(p-?\d+)/, ' \1').split.join('-')
+        ruby_version.single_version_string
+          .sub('(', '').sub(')', '')
+          .sub(/(p-?\d+)/, ' \1')
+          .split.join('-')
       else
         # Not specified in Gemfile or Gemfile.lock
         ""

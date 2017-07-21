@@ -91,7 +91,7 @@ class LanguagePack::Helpers::BundlerWrapper
       ruby_version = begin
          Bundler::Definition.build('Gemfile', 'Gemfile.lock', nil).ruby_version
       rescue Bundler::Dsl::DSLError => e
-        raise GemfileParseError.new(e)
+        raise GemfileParseError, e.message
       end
 
       if ruby_version

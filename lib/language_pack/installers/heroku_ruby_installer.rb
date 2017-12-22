@@ -8,7 +8,7 @@ class LanguagePack::Installers::HerokuRubyInstaller
   BASE_URL = LanguagePack::Base::VENDOR_URL
 
   def initialize(stack)
-    @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack)
+    @fetcher = LanguagePack::Fetcher.new("#{BASE_URL}-staging", stack)
   end
 
   def fetch_unpack(ruby_version, install_dir, build = false)

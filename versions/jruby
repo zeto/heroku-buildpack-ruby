@@ -12,7 +12,7 @@ PARSE_VERSION_TEMPLATE = '<a href=\'/files/downloads/{}/index.html\'>{}</a><br/>
 
 
 def yield_versions():
-    """Discovers currently–released Ruby versions from ruby-lang.org.and
+    """Discovers currently–released JRuby versions from jruby.org and
     Yields them as an iterator."""
 
     # Make the HTTP request.

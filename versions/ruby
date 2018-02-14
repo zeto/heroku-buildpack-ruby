@@ -21,9 +21,7 @@ def yield_versions():
     #
     for result in parse.findall(PARSE_VERSION_TEMPLATE, r.text):
         # Print each version release number.
-        result = result[0]
-        if 'preview' not in result and 'rc' not in result:
-            yield result
+        yield result[0]
 
 
 def main():

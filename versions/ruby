@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from vendor import requests
+from vendor import parse
+
+# The Source of Truth.
+SOURCE_URI = 'https://www.ruby-lang.org/en/downloads/releases/'
+
+# The Parse template for finding the truth amongst the HTML.
+PARSE_VERSION_TEMPLATE = '<td>Ruby {}</td>'
+
+
+def yield_versions():
+    """Discovers currently–released Ruby versions from ruby-lang.org.and
+    Yields them as an iterator."""
+
+    # Make the HTTP request.
+    r = requests.get(SOURCE_URI)
+
+    #
+    for result in parse.findall(PARSE_VERSION_TEMPLATE, r.text):
+        # Print each version release number.
+        result = result[0]
+        if 'preview' not in result and 'rc' not in result:
+            yield result
+
+
+def main():
+    """Print each version number to stdout."""
+    for version in yield_versions():
+        print(version)
+
+
+# If executed directly, run main automatically.
+if __name__ == '__main__':
+    main()

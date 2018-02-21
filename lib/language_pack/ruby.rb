@@ -14,8 +14,6 @@ require "language_pack/version"
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
   NAME                 = "ruby"
-  LIBYAML_VERSION      = "0.1.7"
-  LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.15.2"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
@@ -513,17 +511,6 @@ ERROR
     end
   end
 
-  # install libyaml into the LP to be referenced for psych compilation
-  # @param [String] tmpdir to store the libyaml files
-  def install_libyaml(dir)
-    instrument 'ruby.install_libyaml' do
-      FileUtils.mkdir_p dir
-      Dir.chdir(dir) do
-        @fetchers[:buildpack].fetch_untar("#{@stack}/#{LIBYAML_PATH}.tgz")
-      end
-    end
-  end
-
   # remove `vendor/bundle` that comes from the git repo
   # in case there are native ext.
   # users should be using `bundle pack` instead.
@@ -620,12 +607,7 @@ WARNING
         bundler_output = ""
         bundle_time    = nil
         Dir.mktmpdir("libyaml-") do |tmpdir|
-          libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
-          install_libyaml(libyaml_dir)
-
           # need to setup compile environment for the psych gem
-          yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
-          yaml_lib       = File.expand_path("#{libyaml_dir}/lib").shellescape
           pwd            = Dir.pwd
           bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}/lib"
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
@@ -633,9 +615,9 @@ WARNING
           env_vars       = {
             "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
             "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
-            "CPATH"                         => noshellescape("#{yaml_include}:$CPATH"),
-            "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),
-            "LIBRARY_PATH"                  => noshellescape("#{yaml_lib}:$LIBRARY_PATH"),
+            "CPATH"                         => noshellescape("$CPATH"),
+            "CPPATH"                        => noshellescape("$CPPATH"),
+            "LIBRARY_PATH"                  => noshellescape("$LIBRARY_PATH"),
             "RUBYOPT"                       => syck_hack,
             "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true",
             "BUNDLE_DISABLE_VERSION_CHECK"  => "true"

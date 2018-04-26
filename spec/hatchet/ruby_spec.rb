@@ -27,8 +27,8 @@ describe "Ruby apps" do
 
   describe "2.5.0" do
     it "works" do
-      Hatchet::Runner.new("ruby_25").deploy do
-        # works
+      Hatchet::Runner.new("ruby_25").deploy do |app|
+        #
       end
     end
   end

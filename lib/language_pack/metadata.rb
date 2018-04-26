@@ -13,7 +13,7 @@ class LanguagePack::Metadata
 
   def read(key)
     full_key = "#{FOLDER}/#{key}"
-    File.read(full_key) if exists?(key)
+    File.read(full_key).chomp if exists?(key)
   end
 
   def exists?(key)

@@ -27,6 +27,12 @@ class LanguagePack::Metadata
     full_key = "#{FOLDER}/#{key}"
     File.open(full_key, 'w') {|f| f.puts value }
     save if isave
+
+    return true
+  end
+
+  def touch(key)
+    write(key, "true")
   end
 
   def save

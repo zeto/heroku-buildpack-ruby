@@ -116,13 +116,8 @@ WARNING
 private
 
   def default_malloc_arena_max?
-    return true if stack_not_14_not_16?
-    return true if "true" == @metadata.read("default_malloc_arena_max")
-
-    if new_app?
-      @metadata.write("default_malloc_arena_max", "true")
-      return true
-    end
+    return true if @metadata.exists?("default_malloc_arena_max")
+    return @metadata.touch("default_malloc_arena_max") if new_app?
 
     return false
   end

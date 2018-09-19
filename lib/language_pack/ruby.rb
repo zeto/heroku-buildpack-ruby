@@ -79,6 +79,20 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def best_practice_warnings
+    puts "snooping"
+
+    puts run("which rails" ,user_env: true)
+    puts "puts hello"
+      process = ProcessSpawn.new(%Q{rails runner 'puts "hello"'}
+        user_env: true,
+        timeout:  60,
+        file:     "./.heroku/ruby/config_detect/rails.txt.foo"
+      )
+      puts "process.success? #{process.success?}"
+      puts "process.timeout? #{process.timeout?}"
+      puts "process.output #{process.output}"
+
+
     if bundler.has_gem?("asset_sync")
       warn(<<-WARNING)
 You are using the `asset_sync` gem.
